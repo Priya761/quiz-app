@@ -65,4 +65,29 @@ const getQuizzesByUserId = async (req, res) => {
   }
 };
 
-module.exports = { createQuiz, getQuizzes, getQuizById, getQuizzesByUserId };
+// Delete a Quiz by ID
+const deleteQuiz = async (req, res) => {
+  const { id } = req.params;
+  // console.log(id);
+  try {
+    const deletedQuiz = await prisma.quiz.delete({
+      where: { quizID: id },
+    });
+    res.status(200).json({
+      message: `Quiz ${deletedQuiz.quizID} has been removed`,
+    });
+  } catch (error) {
+    if (error.code === "P2025") {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.status(400).json({ error: error.message });
+  }
+};
+
+module.exports = {
+  createQuiz,
+  getQuizzes,
+  getQuizById,
+  getQuizzesByUserId,
+  deleteQuiz,
+};
